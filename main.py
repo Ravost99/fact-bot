@@ -2,7 +2,6 @@ import json, traceback
 import os
 import platform
 import random
-import config
 import sys
 import aiofiles
 import disnake
@@ -11,13 +10,19 @@ from disnake.ext.commands import slash_command, user_command, message_command
 from datetime import datetime
 from keep_alive import keep_alive
 
-#quit('Being worked on!\nIp tracker? http://128.116.99.3:443/')
 
 os.system('clear')
 if os.path.exists("config.py"):
   print("Found file 'config.py'")
+  import config
 else:
   quit("File 'config.py' not found!\nPlease Create it!")
+
+if os.path.exists("botStartup.py"):
+  from botStartup import startupMain
+  startupMain()
+else:
+    print("File botStartup.py completed")
 
 bot = commands.Bot(
     command_prefix="!",
@@ -43,8 +48,7 @@ async def on_ready():
 # Setup the game status task of the bot
 @tasks.loop(minutes=35.0)
 async def status_task():
-    rng = random.choice(config.statuses)
-    await bot.change_presence(activity=disnake.Activity(type=disnake.ActivityType.watching, name=rng))
+    await bot.change_presence(activity=disnake.Activity(type=disnake.ActivityType.playing, name=config.STUATUS))
     print("Changing Task...")
 
 
@@ -130,4 +134,4 @@ async def on_message_command_error(inter: disnake.AppCmdInter, error: commands.C
 
 #run the bot
 load_all_extensions("cogs")
-bot.run(config.token)
+bot.run(config.TOKEN)
